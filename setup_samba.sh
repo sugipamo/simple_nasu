@@ -12,8 +12,10 @@ fi
 USERNAME=$1
 
 # Sambaのインストール
-sudo apt update
-sudo apt install -y samba
+sudo apt -y purge samba samba-common samba-common-bin
+sudo apt -y autoremove
+sudo apt -y update
+sudo apt -y install samba
 
 # ユーザーが既に存在するか確認
 if id "$USERNAME" &>/dev/null; then
@@ -35,22 +37,18 @@ SHARE_PATH="$(pwd)/share"
 # 共有ディレクトリの作成
 sudo mkdir -p $SHARE_PATH
 sudo chown $USERNAME:$USERNAME $SHARE_PATH
+sudo chmod 700 $SHARE_PATH  # パーミッションを設定
 
-# グローバル設定の追加（通信の暗号化）
+
 sudo bash -c "cat >> $SAMBA_CONF <<EOL
 [global]
    smb encrypt = required
-EOL"
-
-# Samba設定ファイルに共有設定を追加
-sudo bash -c "cat >> $SAMBA_CONF <<EOL
-
 [$SHARE_NAME]
    path = $SHARE_PATH
    valid users = $USERNAME
-   guest ok = no
+   guest ok = yes
    read only = no
-   browsable = no
+   browsable = yes
 EOL"
 
 # UFWの設定（Sambaのポートを許可）
