@@ -48,6 +48,12 @@ sudo bash -c "cat >> $SAMBA_CONF <<EOL
    browsable = no
 EOL"
 
+# UFWの設定（Sambaのポートを許可）
+sudo ufw allow Samba
+
+# UFWの有効化
+sudo ufw enable
+
 # Sambaサービスの再起動
 sudo systemctl restart smbd
 sudo systemctl restart nmbd
