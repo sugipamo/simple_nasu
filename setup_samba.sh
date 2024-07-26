@@ -15,8 +15,13 @@ USERNAME=$1
 sudo apt update
 sudo apt install -y samba
 
-# 新規ユーザーの追加
-sudo adduser --disabled-login --gecos "" $USERNAME
+# ユーザーが既に存在するか確認
+if id "$USERNAME" &>/dev/null; then
+  echo "User $USERNAME already exists, skipping user creation."
+else
+  # 新規ユーザーの追加
+  sudo adduser --disabled-login --gecos "" $USERNAME
+fi
 
 # Sambaユーザーの追加とパスワード設定
 echo "Setting Samba password for user $USERNAME"
